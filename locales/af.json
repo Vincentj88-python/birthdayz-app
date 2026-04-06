@@ -1,0 +1,63 @@
+{
+  "common": {
+    "continue": "Gaan voort",
+    "cancel": "Kanselleer",
+    "save": "Stoor",
+    "delete": "Verwyder",
+    "edit": "Wysig",
+    "done": "Klaar",
+    "loading": "Laai...",
+    "error": "Iets het verkeerd gegaan",
+    "retry": "Probeer weer"
+  },
+  "auth": {
+    "signIn": "Teken In",
+    "signInWithGoogle": "Teken in met Google",
+    "signOut": "Teken Uit",
+    "welcome": "Moenie weer 'n verjaarsdag vergeet nie",
+    "subtitle": "Birthdayz herinner jou aan elke verjaarsdag en help jou om hartlike wense via WhatsApp te stuur."
+  },
+  "onboarding": {
+    "welcome": "Moenie weer 'n verjaarsdag vergeet nie",
+    "chooseLanguage": "Kies jou taal",
+    "yourName": "Wat moet ons jou noem?",
+    "yourBirthday": "Wanneer is JOU verjaarsdag?",
+    "yourPhone": "Wat is jou nommer sodat vriende jou kan vind?",
+    "importContacts": "Vind vriende met verjaarsdae",
+    "inviteFriends": "Voltooi jou verjaardaglys",
+    "notifications": "Bly herinner",
+    "allSet": "Jy is gereed!",
+    "friendsAdded": "Jy het {{count}} verjaarsdae bygevoeg",
+    "pendingInvites": "{{count}} vriende het nog nie hulle s'n bygevoeg nie"
+  },
+  "tabs": {
+    "home": "Tuis",
+    "friends": "Vriende",
+    "settings": "Instellings"
+  },
+  "home": {
+    "today": "Vandag",
+    "thisWeek": "Hierdie Week",
+    "upcoming": "Binnekort",
+    "noBirthdaysToday": "Geen verjaarsdae vandag nie",
+    "turnsToday": "{{name}} word vandag {{age}}!",
+    "turnsIn": "Word {{age}} oor {{days}} dae",
+    "turnsTomorrow": "Word môre {{age}}"
+  },
+  "friends": {
+    "title": "Vriende",
+    "addFriend": "Voeg 'n Vriend By",
+    "search": "Soek vriende...",
+    "noBirthday": "Verjaarsdag nog nie bygevoeg nie",
+    "requestBirthday": "Versoek Verjaarsdag",
+    "inviteSent": "Uitnodiging gestuur"
+  },
+  "settings": {
+    "title": "Instellings",
+    "language": "Taal",
+    "notifications": "Kennisgewings",
+    "account": "Rekening",
+    "premium": "Premium",
+    "about": "Oor Birthdayz"
+  }
+}

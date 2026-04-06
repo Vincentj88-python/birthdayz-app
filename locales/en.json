@@ -1,0 +1,63 @@
+{
+  "common": {
+    "continue": "Continue",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "done": "Done",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Try again"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signInWithGoogle": "Sign in with Google",
+    "signOut": "Sign Out",
+    "welcome": "Never forget a birthday again",
+    "subtitle": "Birthdayz reminds you of every birthday and helps you send heartfelt wishes via WhatsApp."
+  },
+  "onboarding": {
+    "welcome": "Never forget a birthday again",
+    "chooseLanguage": "Choose your language",
+    "yourName": "What should we call you?",
+    "yourBirthday": "When's YOUR birthday?",
+    "yourPhone": "What's your number so friends can find you?",
+    "importContacts": "Find friends with birthdays",
+    "inviteFriends": "Complete your birthday list",
+    "notifications": "Stay reminded",
+    "allSet": "You're all set!",
+    "friendsAdded": "You've added {{count}} birthdays",
+    "pendingInvites": "{{count}} friends haven't added theirs yet"
+  },
+  "tabs": {
+    "home": "Home",
+    "friends": "Friends",
+    "settings": "Settings"
+  },
+  "home": {
+    "today": "Today",
+    "thisWeek": "This Week",
+    "upcoming": "Upcoming",
+    "noBirthdaysToday": "No birthdays today",
+    "turnsToday": "{{name}} turns {{age}} today!",
+    "turnsIn": "Turns {{age}} in {{days}} days",
+    "turnsTomorrow": "Turns {{age}} tomorrow"
+  },
+  "friends": {
+    "title": "Friends",
+    "addFriend": "Add a Friend",
+    "search": "Search friends...",
+    "noBirthday": "Birthday not added yet",
+    "requestBirthday": "Request Birthday",
+    "inviteSent": "Invite sent"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "notifications": "Notifications",
+    "account": "Account",
+    "premium": "Premium",
+    "about": "About Birthdayz"
+  }
+}
