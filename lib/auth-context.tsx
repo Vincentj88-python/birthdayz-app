@@ -1,14 +1,22 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { makeRedirectUri } from 'expo-auth-session';
+import * as WebBrowser from 'expo-web-browser';
+import * as Linking from 'expo-linking';
 import { Session } from '@supabase/supabase-js';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { supabase } from './supabase';
 import type { User } from '@/types/database';
+
+WebBrowser.maybeCompleteAuthSession();
+
+const redirectUri = makeRedirectUri();
 
 interface AuthContextType {
   session: Session | null;
   user: User | null;
   isLoading: boolean;
   signInWithGoogle: () => Promise<void>;
+  signInWithEmail: (email: string, password: string) => Promise<void>;
+  signUpWithEmail: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
@@ -21,10 +29,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    GoogleSignin.configure({
-      webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
-    });
-
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       if (session?.user) {
@@ -46,7 +50,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     });
 
-    return () => subscription.unsubscribe();
+    // Listen for deep link redirects (OAuth callback)
+    const linkingSub = Linking.addEventListener('url', async ({ url }) => {
+      if (url.includes('access_token') || url.includes('code=')) {
+        const params = new URLSearchParams(url.split('#')[1] || url.split('?')[1] || '');
+        const accessToken = params.get('access_token');
+        const refreshToken = params.get('refresh_token');
+        if (accessToken && refreshToken) {
+          await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
+        }
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+      linkingSub.remove();
+    };
   }, []);
 
   async function fetchUserProfile(userId: string) {
@@ -69,38 +88,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   async function signInWithGoogle() {
-    // Dev bypass for Expo Go (Google Sign In requires dev build)
-    if (__DEV__ && process.env.EXPO_PUBLIC_DEV_EMAIL) {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: process.env.EXPO_PUBLIC_DEV_EMAIL,
-        password: process.env.EXPO_PUBLIC_DEV_PASSWORD || 'devpassword123',
-      });
-      if (error) throw error;
-      return;
-    }
-
-    await GoogleSignin.hasPlayServices();
-    const signInResult = await GoogleSignin.signIn();
-    const idToken = signInResult.data?.idToken;
-
-    if (!idToken) {
-      throw new Error('No ID token received from Google');
-    }
-
-    const { error } = await supabase.auth.signInWithIdToken({
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      token: idToken,
+      options: {
+        redirectTo: redirectUri,
+        skipBrowserRedirect: true,
+      },
     });
 
+    if (error) throw error;
+    if (!data.url) throw new Error('No OAuth URL returned');
+
+    const result = await WebBrowser.openAuthSessionAsync(
+      data.url,
+      redirectUri,
+    );
+
+    if (result.type === 'success') {
+      const params = new URLSearchParams(
+        result.url.split('#')[1] || result.url.split('?')[1] || ''
+      );
+      const accessToken = params.get('access_token');
+      const refreshToken = params.get('refresh_token');
+
+      if (accessToken && refreshToken) {
+        await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        });
+      }
+    }
+  }
+
+  async function signInWithEmail(email: string, password: string) {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+  }
+
+  async function signUpWithEmail(email: string, password: string) {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { emailRedirectTo: redirectUri },
+    });
     if (error) throw error;
   }
 
   async function signOut() {
-    try {
-      await GoogleSignin.signOut();
-    } catch {
-      // Google Sign In may not be initialized in dev
-    }
     await supabase.auth.signOut();
     setSession(null);
     setUser(null);
@@ -108,7 +142,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ session, user, isLoading, signInWithGoogle, signOut, refreshUser }}
+      value={{ session, user, isLoading, signInWithGoogle, signInWithEmail, signUpWithEmail, signOut, refreshUser }}
     >
       {children}
     </AuthContext.Provider>

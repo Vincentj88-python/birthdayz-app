@@ -27,7 +27,9 @@
         "backgroundColor": "#FFF5EB"
       },
       "edgeToEdgeEnabled": true,
-      "permissions": ["android.permission.READ_CONTACTS"]
+      "permissions": [
+        "android.permission.READ_CONTACTS"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -57,7 +59,9 @@
           "icon": "./assets/images/icon.png",
           "color": "#E8756A"
         }
-      ]
+      ],
+      "expo-web-browser",
+      "@react-native-community/datetimepicker"
     ],
     "experiments": {
       "typedRoutes": true

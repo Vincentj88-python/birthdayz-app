@@ -14,6 +14,7 @@ import {
   Quicksand_700Bold,
 } from '@expo-google-fonts/quicksand';
 import { AuthProvider } from '@/lib/auth-context';
+import { FriendsProvider } from '@/hooks/useFriends';
 import '@/lib/i18n';
 
 SplashScreen.preventAutoHideAsync();
@@ -40,12 +41,15 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-      <StatusBar style="dark" />
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(auth)" />
-        <Stack.Screen name="(onboarding)" />
-        <Stack.Screen name="(tabs)" />
-      </Stack>
+      <FriendsProvider>
+        <StatusBar style="dark" />
+        <Stack screenOptions={{ headerShown: false }} initialRouteName="(tabs)">
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="(auth)" />
+          <Stack.Screen name="(onboarding)" />
+          <Stack.Screen name="friend" />
+        </Stack>
+      </FriendsProvider>
     </AuthProvider>
   );
 }

@@ -42,7 +42,11 @@
     "noBirthdaysToday": "No birthdays today",
     "turnsToday": "{{name}} turns {{age}} today!",
     "turnsIn": "Turns {{age}} in {{days}} days",
-    "turnsTomorrow": "Turns {{age}} tomorrow"
+    "turnsTomorrow": "Turns {{age}} tomorrow",
+    "sendWish": "Send Wish",
+    "emptyUpcoming": "No upcoming birthdays in the next 30 days",
+    "birthdayIn": "in {{days}} days",
+    "birthdayTomorrow": "Tomorrow"
   },
   "friends": {
     "title": "Friends",
@@ -50,7 +54,48 @@
     "search": "Search friends...",
     "noBirthday": "Birthday not added yet",
     "requestBirthday": "Request Birthday",
-    "inviteSent": "Invite sent"
+    "inviteSent": "Invite sent",
+    "importContacts": "Import from Contacts",
+    "sortByName": "Name",
+    "sortByBirthday": "Birthday",
+    "emptyList": "No friends added yet. Import from contacts or add them manually.",
+    "deleteConfirmTitle": "Delete Friend",
+    "deleteConfirmMessage": "Are you sure you want to delete {{name}}?"
+  },
+  "friend": {
+    "addTitle": "Add Friend",
+    "editTitle": "Edit Friend",
+    "name": "Name",
+    "phone": "Phone Number",
+    "birthday": "Birthday",
+    "relationship": "Relationship",
+    "notes": "Notes",
+    "family": "Family",
+    "friendRelation": "Friend",
+    "colleague": "Colleague",
+    "other": "Other",
+    "nextBirthday": "Next birthday in {{days}} days",
+    "nextBirthdayTomorrow": "Next birthday tomorrow",
+    "turnsAge": "Turning {{age}}",
+    "wishHistory": "Wish History",
+    "noWishes": "No wishes sent yet",
+    "deleteSuccess": "Friend deleted"
+  },
+  "invite": {
+    "requestBirthday": "Request Birthday",
+    "sent": "Invite sent",
+    "pending": "Invite pending"
+  },
+  "contacts": {
+    "importTitle": "Import Contacts",
+    "permissionTitle": "Access Your Contacts",
+    "permissionMessage": "Birthdayz will only read contacts that have birthday information saved.",
+    "found": "{{count}} contacts with birthdays found",
+    "importing": "Importing...",
+    "imported": "{{count}} contacts imported",
+    "noContacts": "No contacts with birthdays found",
+    "selectAll": "Select All",
+    "deselectAll": "Deselect All"
   },
   "settings": {
     "title": "Settings",

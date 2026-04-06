@@ -42,7 +42,11 @@
     "noBirthdaysToday": "Geen verjaarsdae vandag nie",
     "turnsToday": "{{name}} word vandag {{age}}!",
     "turnsIn": "Word {{age}} oor {{days}} dae",
-    "turnsTomorrow": "Word môre {{age}}"
+    "turnsTomorrow": "Word môre {{age}}",
+    "sendWish": "Stuur Wens",
+    "emptyUpcoming": "Geen komende verjaarsdae in die volgende 30 dae nie",
+    "birthdayIn": "oor {{days}} dae",
+    "birthdayTomorrow": "Môre"
   },
   "friends": {
     "title": "Vriende",
@@ -50,7 +54,48 @@
     "search": "Soek vriende...",
     "noBirthday": "Verjaarsdag nog nie bygevoeg nie",
     "requestBirthday": "Versoek Verjaarsdag",
-    "inviteSent": "Uitnodiging gestuur"
+    "inviteSent": "Uitnodiging gestuur",
+    "importContacts": "Voer Kontakte In",
+    "sortByName": "Naam",
+    "sortByBirthday": "Verjaarsdag",
+    "emptyList": "Nog geen vriende bygevoeg nie. Voer kontakte in of voeg hulle handmatig by.",
+    "deleteConfirmTitle": "Verwyder Vriend",
+    "deleteConfirmMessage": "Is jy seker jy wil {{name}} verwyder?"
+  },
+  "friend": {
+    "addTitle": "Voeg Vriend By",
+    "editTitle": "Wysig Vriend",
+    "name": "Naam",
+    "phone": "Telefoonnommer",
+    "birthday": "Verjaarsdag",
+    "relationship": "Verhouding",
+    "notes": "Notas",
+    "family": "Familie",
+    "friendRelation": "Vriend",
+    "colleague": "Kollega",
+    "other": "Ander",
+    "nextBirthday": "Volgende verjaarsdag oor {{days}} dae",
+    "nextBirthdayTomorrow": "Volgende verjaarsdag môre",
+    "turnsAge": "Word {{age}}",
+    "wishHistory": "Wens Geskiedenis",
+    "noWishes": "Nog geen wense gestuur nie",
+    "deleteSuccess": "Vriend verwyder"
+  },
+  "invite": {
+    "requestBirthday": "Versoek Verjaarsdag",
+    "sent": "Uitnodiging gestuur",
+    "pending": "Uitnodiging hangend"
+  },
+  "contacts": {
+    "importTitle": "Voer Kontakte In",
+    "permissionTitle": "Toegang tot Kontakte",
+    "permissionMessage": "Birthdayz sal slegs kontakte lees wat verjaarsdag-inligting gestoor het.",
+    "found": "{{count}} kontakte met verjaarsdae gevind",
+    "importing": "Besig om in te voer...",
+    "imported": "{{count}} kontakte ingevoer",
+    "noContacts": "Geen kontakte met verjaarsdae gevind nie",
+    "selectAll": "Kies Almal",
+    "deselectAll": "Ontkies Almal"
   },
   "settings": {
     "title": "Instellings",

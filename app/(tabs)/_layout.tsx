@@ -22,7 +22,7 @@ export default function TabsLayout() {
   }
 
   if (!user) {
-    return <Redirect href="/(onboarding)" />;
+    return <Redirect href="/(onboarding)/welcome" />;
   }
 
   return (
