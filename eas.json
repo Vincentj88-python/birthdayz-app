@@ -9,15 +9,43 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://frxyflrzrthmfjhiwzjn.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_Upqk_jv7IvYloGTW3JQ2pw_bAQ-ngRO",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "616383775014-tvt60qm0jkkftnu93tdlhhtea2noe4j5.apps.googleusercontent.com",
+        "EXPO_PUBLIC_APP_URL": "https://birthdayz.app",
+        "EXPO_PUBLIC_INVITE_BASE_URL": "https://birthdayz.app/invite",
+        "EXPO_PUBLIC_EAS_PROJECT_ID": "880f6378-94a7-4a86-a792-4b624a05de78",
+        "EXPO_PUBLIC_REVENUECAT_API_KEY": "test_YCmuXoFeDRlJtEMHDAlyyeFsxSM"
       }
     },
     "preview": {
       "distribution": "internal",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://frxyflrzrthmfjhiwzjn.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_Upqk_jv7IvYloGTW3JQ2pw_bAQ-ngRO",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "616383775014-tvt60qm0jkkftnu93tdlhhtea2noe4j5.apps.googleusercontent.com",
+        "EXPO_PUBLIC_APP_URL": "https://birthdayz.app",
+        "EXPO_PUBLIC_INVITE_BASE_URL": "https://birthdayz.app/invite",
+        "EXPO_PUBLIC_EAS_PROJECT_ID": "880f6378-94a7-4a86-a792-4b624a05de78",
+        "EXPO_PUBLIC_REVENUECAT_API_KEY": "test_YCmuXoFeDRlJtEMHDAlyyeFsxSM"
       }
     },
-    "production": {}
+    "production": {
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://frxyflrzrthmfjhiwzjn.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_Upqk_jv7IvYloGTW3JQ2pw_bAQ-ngRO",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "616383775014-tvt60qm0jkkftnu93tdlhhtea2noe4j5.apps.googleusercontent.com",
+        "EXPO_PUBLIC_APP_URL": "https://birthdayz.app",
+        "EXPO_PUBLIC_INVITE_BASE_URL": "https://birthdayz.app/invite",
+        "EXPO_PUBLIC_EAS_PROJECT_ID": "880f6378-94a7-4a86-a792-4b624a05de78",
+        "EXPO_PUBLIC_REVENUECAT_API_KEY": "test_YCmuXoFeDRlJtEMHDAlyyeFsxSM"
+      }
+    }
   },
   "submit": {
     "production": {}
