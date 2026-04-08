@@ -1,6 +1,6 @@
-import { TouchableOpacity, View, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Body, Muted } from '@/components/ui';
+import { AnimatedPressable, Body, Muted, CountdownRing } from '@/components/ui';
 import { colors, fonts, spacing, borderRadius, fontSize } from '@/constants/theme';
 import { formatBirthdayDisplay } from '@/lib/birthday';
 import type { Friend } from '@/types/database';
@@ -14,31 +14,37 @@ interface BirthdayListItemProps {
 
 export function BirthdayListItem({ friend, daysUntil, ageTurning, onPress }: BirthdayListItemProps) {
   const { t } = useTranslation();
-  const initial = friend.name.charAt(0).toUpperCase();
 
   const daysLabel =
-    daysUntil === 1
-      ? t('home.birthdayTomorrow')
-      : t('home.birthdayIn', { days: daysUntil });
+    daysUntil === 0
+      ? t('home.today')
+      : daysUntil === 1
+        ? t('home.birthdayTomorrow')
+        : t('home.birthdayIn', { days: daysUntil });
 
   return (
-    <TouchableOpacity style={styles.row} onPress={onPress} activeOpacity={0.7}>
-      <View style={styles.avatar}>
-        <Body style={styles.avatarText}>{initial}</Body>
-      </View>
+    <AnimatedPressable onPress={onPress} style={styles.row} scaleDown={0.98} haptic={false}>
+      <CountdownRing
+        daysUntil={daysUntil}
+        size={52}
+        strokeWidth={4}
+        label={daysUntil > 0 ? (daysUntil === 1 ? 'tmrw' : 'days') : undefined}
+      />
 
       <View style={styles.info}>
         <Body style={styles.name}>{friend.name}</Body>
-        <Muted>
+        <Muted style={styles.detail}>
           {formatBirthdayDisplay(friend.birthday!)}
           {ageTurning > 0 ? ` · ${t('friend.turnsAge', { age: ageTurning })}` : ''}
         </Muted>
       </View>
 
-      <View style={styles.daysBadge}>
-        <Body style={styles.daysText}>{daysLabel}</Body>
+      <View style={[styles.badge, daysUntil <= 1 && styles.badgeUrgent]}>
+        <Body style={[styles.badgeText, daysUntil <= 1 && styles.badgeTextUrgent]}>
+          {daysLabel}
+        </Body>
       </View>
-    </TouchableOpacity>
+    </AnimatedPressable>
   );
 }
 
@@ -52,37 +58,33 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     padding: spacing.md,
     marginBottom: spacing.sm,
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.accent.gold,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: spacing.md,
-  },
-  avatarText: {
-    fontFamily: fonts.heading.bold,
-    color: colors.white,
-    fontSize: fontSize.md,
+    gap: spacing.md,
   },
   info: {
     flex: 1,
   },
   name: {
     fontFamily: fonts.body.semiBold,
+    fontSize: fontSize.md,
   },
-  daysBadge: {
+  detail: {
+    marginTop: 2,
+  },
+  badge: {
     backgroundColor: colors.accent.gold + '20',
     paddingHorizontal: spacing.sm,
     paddingVertical: 4,
     borderRadius: borderRadius.full,
-    marginLeft: spacing.sm,
   },
-  daysText: {
+  badgeUrgent: {
+    backgroundColor: colors.accent.red + '15',
+  },
+  badgeText: {
     fontSize: fontSize.xs,
     color: colors.accent.goldHover,
     fontFamily: fonts.body.semiBold,
+  },
+  badgeTextUrgent: {
+    color: colors.accent.red,
   },
 });

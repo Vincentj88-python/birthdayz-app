@@ -39,14 +39,21 @@
     "today": "Vandag",
     "thisWeek": "Hierdie Week",
     "upcoming": "Binnekort",
+    "greetingMorning": "Goeie môre, {{name}} ☀️",
+    "greetingAfternoon": "Goeie middag, {{name}} 👋",
+    "greetingEvening": "Goeie aand, {{name}} 🌙",
     "noBirthdaysToday": "Geen verjaarsdae vandag nie",
+    "checkUpcoming": "Kyk hieronder wie se verjaarsdag nader kom!",
     "turnsToday": "{{name}} word vandag {{age}}!",
     "turnsIn": "Word {{age}} oor {{days}} dae",
     "turnsTomorrow": "Word môre {{age}}",
     "sendWish": "Stuur Wens",
     "emptyUpcoming": "Geen komende verjaarsdae in die volgende 30 dae nie",
     "birthdayIn": "oor {{days}} dae",
-    "birthdayTomorrow": "Môre"
+    "birthdayTomorrow": "Môre",
+    "statFriends": "Vriende",
+    "statBirthdays": "Verjaarsdae",
+    "statUpcoming": "Binnekort"
   },
   "friends": {
     "title": "Vriende",
@@ -84,7 +91,9 @@
   "invite": {
     "requestBirthday": "Versoek Verjaarsdag",
     "sent": "Uitnodiging gestuur",
-    "pending": "Uitnodiging hangend"
+    "pending": "Uitnodiging hangend",
+    "inviteFriends": "Nooi Vriende na Birthdayz",
+    "inviteSubtitle": "Deel met vriende sodat hulle nooit jou verjaarsdag vergeet nie!"
   },
   "contacts": {
     "importTitle": "Voer Kontakte In",
@@ -97,6 +106,18 @@
     "selectAll": "Kies Almal",
     "deselectAll": "Ontkies Almal"
   },
+  "requestBirthdays": {
+    "title": "Versoek Verjaarsdae",
+    "subtitle": "Hierdie kontakte het nie verjaarsdae gestoor nie. Vra hulle om hul s'n via WhatsApp by te voeg!",
+    "found": "{{count}} kontakte sonder verjaarsdae",
+    "sendRequests": "Stuur {{count}} Versoeke via WhatsApp",
+    "sending": "Maak WhatsApp oop...",
+    "skip": "Slaan vir nou oor",
+    "doneTitle": "Versoeke Gestuur!",
+    "doneMessage": "{{count}} verjaardagversoeke via WhatsApp gestuur. Jy sal in kennis gestel word wanneer hulle hul verjaarsdae byvoeg.",
+    "allDone": "Alles op datum!",
+    "allDoneMessage": "Al jou kontakte het verjaarsdae of is reeds genooi."
+  },
   "settings": {
     "title": "Instellings",
     "language": "Taal",
@@ -104,5 +125,40 @@
     "account": "Rekening",
     "premium": "Premium",
     "about": "Oor Birthdayz"
+  },
+  "notifications": {
+    "title": "Verjaarsdag Herinnerings",
+    "subtitle": "Kies wanneer jy herinner wil word oor komende verjaarsdae.",
+    "remind7Days": "7 dae voor",
+    "remind3Days": "3 dae voor",
+    "remind1Day": "1 dag voor",
+    "remindMorning": "Oggend van verjaarsdag"
+  },
+  "wishes": {
+    "chooseMessage": "Kies 'n Boodskap",
+    "tapToSelect": "Tik op 'n boodskap om dit te kies, of wysig hieronder.",
+    "generating": "Skep persoonlike boodskappe...",
+    "editBelow": "Wysig jou boodskap",
+    "sendViaWhatsApp": "Stuur via WhatsApp",
+    "aiWish": "KI Boodskap",
+    "noPhone": "Geen telefoonnommer",
+    "noPhoneMessage": "Voeg 'n telefoonnommer by om 'n wens via WhatsApp te stuur."
+  },
+  "premium": {
+    "title": "Opgradeer na Birthdayz Pro",
+    "subscribe": "Teken Nou In",
+    "restore": "Herstel Aankope",
+    "upgradeToPro": "Opgradeer na Pro",
+    "unlockFeature": "Ontsluit {{feature}} met Birthdayz Pro",
+    "friendLimit": "Gratis plan beperk tot {{limit}} vriende",
+    "featureUnlimitedFriends": "Onbeperkte vriende",
+    "featureAiMessages": "KI-aangedrewe verjaardagboodskappe",
+    "featureAdvanceReminders": "Vroeë herinnerings (7 & 3 dae)",
+    "featurePriority": "Prioriteit-ondersteuning",
+    "planFree": "Gratis Plan",
+    "planPro": "Birthdayz Pro",
+    "activeSubscription": "Jou intekening is aktief",
+    "trialDaysLeft": "{{days}} dae oor in jou gratis proeftydperk",
+    "upgradeDescription": "Opgradeer vir onbeperkte vriende, KI-boodskappe & meer"
   }
 }

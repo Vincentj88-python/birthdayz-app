@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, ScrollView, TouchableOpacity, Alert, StyleSheet } from 'react-native';
+import { View, ScrollView, TouchableOpacity, Alert, Modal, TextInput, ActivityIndicator, StyleSheet } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@/lib/supabase';
@@ -7,9 +7,12 @@ import { useAuth } from '@/lib/auth-context';
 import { useFriends } from '@/hooks/useFriends';
 import { sendViaWhatsApp } from '@/lib/whatsapp';
 import { generateInviteCode, buildInviteMessage } from '@/lib/invite';
+import { generateWishes } from '@/lib/wishes';
 import {
   isBirthdayToday, daysUntilBirthday, getAge, getAgeTurning, formatBirthdayDisplay,
 } from '@/lib/birthday';
+import { usePremium } from '@/hooks/usePremium';
+import { Paywall } from '@/components/Paywall';
 import { ScreenContainer, Heading, Body, Muted, Button, Card } from '@/components/ui';
 import { colors, fonts, spacing, fontSize, borderRadius } from '@/constants/theme';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -20,10 +23,18 @@ export default function FriendDetailScreen() {
   const { t } = useTranslation();
   const { user } = useAuth();
   const { deleteFriend } = useFriends();
+  const { isPremium } = usePremium();
 
   const [friend, setFriend] = useState<Friend | null>(null);
   const [wishes, setWishes] = useState<Wish[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // AI wish modal state
+  const [wishModalVisible, setWishModalVisible] = useState(false);
+  const [aiWishes, setAiWishes] = useState<string[]>([]);
+  const [selectedWish, setSelectedWish] = useState('');
+  const [generatingWishes, setGeneratingWishes] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -52,8 +63,47 @@ export default function FriendDetailScreen() {
   const ageTurning = hasBirthday ? getAgeTurning(friend.birthday!) : null;
 
   async function handleSendWish() {
-    if (!friend.phone) {
-      Alert.alert('No phone number', 'Add a phone number to send a wish via WhatsApp.');
+    if (!friend?.phone) {
+      Alert.alert(t('wishes.noPhone'), t('wishes.noPhoneMessage'));
+      return;
+    }
+
+    // Free users: basic message directly
+    if (!isPremium) {
+      setShowPaywall(true);
+      return;
+    }
+
+    // Premium users: AI-generated options
+    setWishModalVisible(true);
+    setGeneratingWishes(true);
+    setAiWishes([]);
+    setSelectedWish('');
+
+    try {
+      const generated = await generateWishes({
+        name: friend.name,
+        age: ageTurning ?? null,
+        relationship: friend.relationship,
+        language: user?.language ?? 'en',
+        notes: friend.notes,
+      });
+      setAiWishes(generated);
+      if (generated.length > 0) setSelectedWish(generated[0]);
+    } catch {
+      const fallback = ageTurning && ageTurning > 0
+        ? `Happy birthday, ${friend.name}! Wishing you a wonderful ${ageTurning}th birthday! 🎂`
+        : `Happy birthday, ${friend.name}! 🎂`;
+      setAiWishes([fallback]);
+      setSelectedWish(fallback);
+    } finally {
+      setGeneratingWishes(false);
+    }
+  }
+
+  function handleQuickWish() {
+    if (!friend?.phone) {
+      Alert.alert(t('wishes.noPhone'), t('wishes.noPhoneMessage'));
       return;
     }
     const message = ageTurning && ageTurning > 0
@@ -62,8 +112,7 @@ export default function FriendDetailScreen() {
 
     sendViaWhatsApp(friend.phone, message);
 
-    // Log wish
-    await supabase.from('wishes').insert({
+    supabase.from('wishes').insert({
       user_id: user?.id,
       friend_id: friend.id,
       year: new Date().getFullYear(),
@@ -72,8 +121,31 @@ export default function FriendDetailScreen() {
     });
   }
 
+  async function handleConfirmWish() {
+    if (!selectedWish || !friend?.phone) return;
+
+    sendViaWhatsApp(friend.phone, selectedWish);
+    setWishModalVisible(false);
+
+    await supabase.from('wishes').insert({
+      user_id: user?.id,
+      friend_id: friend.id,
+      year: new Date().getFullYear(),
+      message: selectedWish,
+      channel: 'whatsapp',
+    });
+
+    // Refresh wish history
+    const { data } = await supabase
+      .from('wishes')
+      .select('*')
+      .eq('friend_id', friend.id)
+      .order('sent_at', { ascending: false });
+    if (data) setWishes(data as Wish[]);
+  }
+
   async function handleRequestBirthday() {
-    if (!user) return;
+    if (!user || !friend) return;
     const code = generateInviteCode();
     const message = buildInviteMessage(friend.name, code, user.language);
 
@@ -93,6 +165,7 @@ export default function FriendDetailScreen() {
   }
 
   function handleDelete() {
+    if (!friend) return;
     Alert.alert(
       t('friends.deleteConfirmTitle'),
       t('friends.deleteConfirmMessage', { name: friend.name }),
@@ -168,7 +241,14 @@ export default function FriendDetailScreen() {
 
         <View style={styles.actions}>
           {(isToday || (daysUntil !== null && daysUntil <= 7)) && hasBirthday && (
-            <Button title={t('home.sendWish')} onPress={handleSendWish} fullWidth />
+            <>
+              <Button title={t('home.sendWish')} onPress={handleQuickWish} variant="secondary" fullWidth />
+              <Button
+                title={isPremium ? t('wishes.aiWish') : `${t('wishes.aiWish')} ✦`}
+                onPress={handleSendWish}
+                fullWidth
+              />
+            </>
           )}
           {!hasBirthday && (
             <Button
@@ -203,6 +283,81 @@ export default function FriendDetailScreen() {
           <Button title={t('common.delete')} onPress={handleDelete} variant="outline" fullWidth />
         </View>
       </ScrollView>
+
+      <Modal
+        visible={wishModalVisible}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setWishModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Heading style={styles.modalTitle}>{t('wishes.chooseMessage')}</Heading>
+              <TouchableOpacity onPress={() => setWishModalVisible(false)} hitSlop={12}>
+                <Ionicons name="close" size={24} color={colors.text.primary} />
+              </TouchableOpacity>
+            </View>
+
+            {generatingWishes ? (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color={colors.accent.red} />
+                <Body style={styles.loadingText}>{t('wishes.generating')}</Body>
+              </View>
+            ) : (
+              <ScrollView style={styles.modalScroll} showsVerticalScrollIndicator={false}>
+                <Muted style={styles.modalSubtitle}>{t('wishes.tapToSelect')}</Muted>
+                {aiWishes.map((wish, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={[
+                      styles.wishOption,
+                      selectedWish === wish && styles.wishOptionSelected,
+                    ]}
+                    onPress={() => setSelectedWish(wish)}
+                    activeOpacity={0.7}
+                  >
+                    <Body
+                      style={[
+                        styles.wishOptionText,
+                        selectedWish === wish && styles.wishOptionTextSelected,
+                      ]}
+                    >
+                      {wish}
+                    </Body>
+                    {selectedWish === wish && (
+                      <Ionicons name="checkmark-circle" size={22} color={colors.accent.red} />
+                    )}
+                  </TouchableOpacity>
+                ))}
+
+                <Muted style={styles.editLabel}>{t('wishes.editBelow')}</Muted>
+                <TextInput
+                  style={styles.editInput}
+                  value={selectedWish}
+                  onChangeText={setSelectedWish}
+                  multiline
+                  textAlignVertical="top"
+                />
+
+                <Button
+                  title={t('wishes.sendViaWhatsApp')}
+                  onPress={handleConfirmWish}
+                  fullWidth
+                  disabled={!selectedWish}
+                />
+                <View style={{ height: spacing.lg }} />
+              </ScrollView>
+            )}
+          </View>
+        </View>
+      </Modal>
+
+      <Paywall
+        visible={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        feature={t('premium.featureAiMessages')}
+      />
     </ScreenContainer>
   );
 }
@@ -292,5 +447,81 @@ const styles = StyleSheet.create({
   },
   deleteArea: {
     paddingBottom: spacing.xxl,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: colors.surface,
+    borderTopLeftRadius: borderRadius.xl,
+    borderTopRightRadius: borderRadius.xl,
+    maxHeight: '85%',
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.xl,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.md,
+  },
+  modalTitle: {
+    fontSize: fontSize.xl,
+  },
+  modalScroll: {
+    flexGrow: 0,
+  },
+  modalSubtitle: {
+    marginBottom: spacing.md,
+  },
+  loadingContainer: {
+    alignItems: 'center',
+    paddingVertical: spacing.xxl,
+  },
+  loadingText: {
+    marginTop: spacing.md,
+    color: colors.text.secondary,
+  },
+  wishOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: spacing.md,
+    borderRadius: borderRadius.md,
+    borderWidth: 2,
+    borderColor: colors.border,
+    marginBottom: spacing.sm,
+    backgroundColor: colors.white,
+  },
+  wishOptionSelected: {
+    borderColor: colors.accent.red,
+    backgroundColor: '#FFF0EE',
+  },
+  wishOptionText: {
+    flex: 1,
+    fontSize: fontSize.md,
+    lineHeight: 22,
+  },
+  wishOptionTextSelected: {
+    color: colors.text.primary,
+  },
+  editLabel: {
+    marginTop: spacing.md,
+    marginBottom: spacing.xs,
+    fontFamily: fonts.body.semiBold,
+  },
+  editInput: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    fontFamily: fonts.body.medium,
+    fontSize: fontSize.md,
+    color: colors.text.primary,
+    minHeight: 80,
+    backgroundColor: colors.white,
+    marginBottom: spacing.lg,
   },
 });

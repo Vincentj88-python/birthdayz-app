@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { View, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -10,7 +10,7 @@ import {
   ContactWithBirthday,
 } from '@/lib/contacts';
 import { formatBirthdayDisplay } from '@/lib/birthday';
-import { ScreenContainer, Heading, Body, Muted, Button } from '@/components/ui';
+import { ScreenContainer, Heading, Body, Muted, Button, Input } from '@/components/ui';
 import { colors, fonts, spacing, fontSize, borderRadius } from '@/constants/theme';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
@@ -20,9 +20,16 @@ export default function ImportContactsScreen() {
 
   const [contacts, setContacts] = useState<ContactWithBirthday[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [importing, setImporting] = useState(false);
   const [permissionDenied, setPermissionDenied] = useState(false);
+
+  const filteredContacts = useMemo(() => {
+    if (!searchQuery.trim()) return contacts;
+    const q = searchQuery.toLowerCase();
+    return contacts.filter((c) => c.name.toLowerCase().includes(q));
+  }, [contacts, searchQuery]);
 
   useEffect(() => {
     loadContacts();
@@ -72,7 +79,8 @@ export default function ImportContactsScreen() {
       }));
 
     await batchAddFriends(toImport);
-    router.back();
+    // Navigate to request birthdays screen for contacts WITHOUT birthdays
+    router.replace('/friend/request-birthdays');
   }
 
   if (loading) {
@@ -100,21 +108,11 @@ export default function ImportContactsScreen() {
     );
   }
 
-  if (contacts.length === 0) {
-    return (
-      <ScreenContainer>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} hitSlop={12}>
-            <Ionicons name="close" size={28} color={colors.text.primary} />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.emptyContainer}>
-          <Body style={styles.emoji}>📇</Body>
-          <Body style={styles.emptyText}>{t('contacts.noContacts')}</Body>
-        </View>
-      </ScreenContainer>
-    );
-  }
+  useEffect(() => {
+    if (!loading && !permissionDenied && contacts.length === 0) {
+      router.replace('/friend/request-birthdays');
+    }
+  }, [loading, permissionDenied, contacts.length]);
 
   return (
     <ScreenContainer>
@@ -126,16 +124,23 @@ export default function ImportContactsScreen() {
         <View style={{ width: 28 }} />
       </View>
 
-      <Muted style={styles.count}>{t('contacts.found', { count: contacts.length })}</Muted>
+      <Input
+        placeholder={t('friends.search')}
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+      />
 
-      <TouchableOpacity onPress={toggleAll} style={styles.selectAll}>
-        <Body style={styles.selectAllText}>
-          {selected.size === contacts.length ? t('contacts.deselectAll') : t('contacts.selectAll')}
-        </Body>
-      </TouchableOpacity>
+      <View style={styles.countRow}>
+        <Muted>{t('contacts.found', { count: contacts.length })}</Muted>
+        <TouchableOpacity onPress={toggleAll}>
+          <Body style={styles.selectAllText}>
+            {selected.size === contacts.length ? t('contacts.deselectAll') : t('contacts.selectAll')}
+          </Body>
+        </TouchableOpacity>
+      </View>
 
       <FlatList
-        data={contacts}
+        data={filteredContacts}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => {
           const isSelected = selected.has(item.id);
@@ -181,12 +186,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: fontSize.xl,
   },
-  count: {
-    textAlign: 'center',
-    marginBottom: spacing.sm,
-  },
-  selectAll: {
-    alignSelf: 'flex-end',
+  countRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: spacing.sm,
     marginBottom: spacing.md,
   },
   selectAllText: {

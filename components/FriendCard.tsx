@@ -1,6 +1,7 @@
-import { TouchableOpacity, View, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Body, Muted } from '@/components/ui';
+import { AnimatedPressable, Body, Muted } from '@/components/ui';
 import { colors, fonts, spacing, borderRadius, fontSize } from '@/constants/theme';
 import { formatBirthdayDisplay, daysUntilBirthday, getAgeTurning } from '@/lib/birthday';
 import type { Friend } from '@/types/database';
@@ -22,7 +23,7 @@ export function FriendCard({ friend, onPress, onRequestBirthday, inviteStatus }:
   const ageTurning = hasBirthday ? getAgeTurning(friend.birthday!) : null;
 
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
+    <AnimatedPressable onPress={onPress} style={styles.card} scaleDown={0.98} haptic={false}>
       <View style={styles.avatar}>
         <Body style={styles.avatarText}>{initial}</Body>
       </View>
@@ -65,7 +66,7 @@ export function FriendCard({ friend, onPress, onRequestBirthday, inviteStatus }:
           </View>
         )}
       </View>
-    </TouchableOpacity>
+    </AnimatedPressable>
   );
 }
 

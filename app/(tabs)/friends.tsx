@@ -10,6 +10,7 @@ import { sendViaWhatsApp } from '@/lib/whatsapp';
 import { supabase } from '@/lib/supabase';
 import { ScreenContainer, Heading, Body, Button, Input, Card } from '@/components/ui';
 import { FriendCard } from '@/components/FriendCard';
+import { InviteBanner } from '@/components/InviteBanner';
 import { colors, fonts, spacing, fontSize, borderRadius } from '@/constants/theme';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import type { Friend } from '@/types/database';
@@ -78,6 +79,9 @@ export default function FriendsScreen() {
             />
           </View>
         </Card>
+        <View style={{ marginTop: spacing.md }}>
+          <InviteBanner />
+        </View>
       </ScreenContainer>
     );
   }
@@ -112,9 +116,7 @@ export default function FriendsScreen() {
               </TouchableOpacity>
             ))}
           </View>
-          <TouchableOpacity onPress={() => router.push('/friend/import')} hitSlop={12}>
-            <Ionicons name="download-outline" size={22} color={colors.text.secondary} />
-          </TouchableOpacity>
+          <View />
         </View>
       </View>
 
@@ -122,6 +124,11 @@ export default function FriendsScreen() {
         data={filteredFriends}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
+        ListHeaderComponent={
+          <View style={styles.inviteBanner}>
+            <InviteBanner />
+          </View>
+        }
         refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refresh} tintColor={colors.accent.red} />}
         renderItem={({ item }) => (
           <FriendCard
@@ -200,5 +207,8 @@ const styles = StyleSheet.create({
   emptyActions: {
     width: '100%',
     gap: spacing.sm,
+  },
+  inviteBanner: {
+    marginBottom: spacing.md,
   },
 });

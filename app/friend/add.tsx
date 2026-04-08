@@ -4,12 +4,16 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useFriends } from '@/hooks/useFriends';
+import { usePremium } from '@/hooks/usePremium';
 import { supabase } from '@/lib/supabase';
 import { ScreenContainer, Heading, Body, Muted, Button, Input } from '@/components/ui';
+import { Paywall } from '@/components/Paywall';
 import { colors, spacing, fontSize, borderRadius, fonts } from '@/constants/theme';
 import { formatBirthdayDisplay } from '@/lib/birthday';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import type { Friend } from '@/types/database';
+
+const FREE_FRIEND_LIMIT = 10;
 
 const RELATIONSHIPS = ['family', 'friend', 'colleague', 'other'] as const;
 const RELATIONSHIP_KEYS: Record<string, string> = {
@@ -22,7 +26,8 @@ const RELATIONSHIP_KEYS: Record<string, string> = {
 export default function AddFriendScreen() {
   const { t } = useTranslation();
   const { friendId } = useLocalSearchParams<{ friendId?: string }>();
-  const { addFriend, updateFriend } = useFriends();
+  const { addFriend, updateFriend, friends } = useFriends();
+  const { isPremium } = usePremium();
   const isEdit = !!friendId;
 
   const [name, setName] = useState('');
@@ -32,6 +37,10 @@ export default function AddFriendScreen() {
   const [notes, setNotes] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
+
+  // Check friend limit for free users adding a new friend
+  const atFriendLimit = !isEdit && !isPremium && friends.length >= FREE_FRIEND_LIMIT;
 
   useEffect(() => {
     if (friendId) {
@@ -55,6 +64,10 @@ export default function AddFriendScreen() {
 
   async function handleSave() {
     if (!name.trim()) return;
+    if (atFriendLimit) {
+      setShowPaywall(true);
+      return;
+    }
     setLoading(true);
 
     const data = {
@@ -93,6 +106,18 @@ export default function AddFriendScreen() {
       </View>
 
       <ScrollView style={styles.form} showsVerticalScrollIndicator={false}>
+        {!isEdit && (
+          <TouchableOpacity
+            style={styles.importRow}
+            onPress={() => router.push('/friend/import')}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="people-outline" size={20} color={colors.accent.red} />
+            <Body style={styles.importRowText}>{t('friends.importContacts')}</Body>
+            <Ionicons name="chevron-forward" size={18} color={colors.text.muted} />
+          </TouchableOpacity>
+        )}
+
         <Input
           label={t('friend.name')}
           value={name}
@@ -174,8 +199,13 @@ export default function AddFriendScreen() {
         </View>
 
         <View style={styles.saveArea}>
+          {atFriendLimit && (
+            <Muted style={styles.limitWarning}>
+              {t('premium.friendLimit', { limit: FREE_FRIEND_LIMIT })}
+            </Muted>
+          )}
           <Button
-            title={t('common.save')}
+            title={atFriendLimit ? t('premium.upgradeToPro') : t('common.save')}
             onPress={handleSave}
             loading={loading}
             disabled={!name.trim()}
@@ -183,6 +213,12 @@ export default function AddFriendScreen() {
           />
         </View>
       </ScrollView>
+
+      <Paywall
+        visible={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        feature={t('premium.featureUnlimitedFriends')}
+      />
     </ScreenContainer>
   );
 }
@@ -254,5 +290,28 @@ const styles = StyleSheet.create({
   },
   saveArea: {
     paddingVertical: spacing.xl,
+  },
+  importRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    marginBottom: spacing.lg,
+    gap: spacing.sm,
+  },
+  importRowText: {
+    flex: 1,
+    color: colors.accent.red,
+    fontFamily: fonts.body.semiBold,
+    fontSize: fontSize.md,
+  },
+  limitWarning: {
+    textAlign: 'center',
+    color: colors.accent.gold,
+    fontFamily: fonts.body.semiBold,
+    marginBottom: spacing.md,
   },
 });

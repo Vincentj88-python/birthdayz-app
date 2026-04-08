@@ -39,14 +39,21 @@
     "today": "Today",
     "thisWeek": "This Week",
     "upcoming": "Upcoming",
+    "greetingMorning": "Good morning, {{name}} ☀️",
+    "greetingAfternoon": "Good afternoon, {{name}} 👋",
+    "greetingEvening": "Good evening, {{name}} 🌙",
     "noBirthdaysToday": "No birthdays today",
+    "checkUpcoming": "Check who's coming up below!",
     "turnsToday": "{{name}} turns {{age}} today!",
     "turnsIn": "Turns {{age}} in {{days}} days",
     "turnsTomorrow": "Turns {{age}} tomorrow",
     "sendWish": "Send Wish",
     "emptyUpcoming": "No upcoming birthdays in the next 30 days",
     "birthdayIn": "in {{days}} days",
-    "birthdayTomorrow": "Tomorrow"
+    "birthdayTomorrow": "Tomorrow",
+    "statFriends": "Friends",
+    "statBirthdays": "Birthdays",
+    "statUpcoming": "Upcoming"
   },
   "friends": {
     "title": "Friends",
@@ -84,7 +91,9 @@
   "invite": {
     "requestBirthday": "Request Birthday",
     "sent": "Invite sent",
-    "pending": "Invite pending"
+    "pending": "Invite pending",
+    "inviteFriends": "Invite Friends to Birthdayz",
+    "inviteSubtitle": "Share with friends so they never forget your birthday!"
   },
   "contacts": {
     "importTitle": "Import Contacts",
@@ -97,6 +106,18 @@
     "selectAll": "Select All",
     "deselectAll": "Deselect All"
   },
+  "requestBirthdays": {
+    "title": "Request Birthdays",
+    "subtitle": "These contacts don't have birthdays saved. Ask them to add theirs via WhatsApp!",
+    "found": "{{count}} contacts without birthdays",
+    "sendRequests": "Send {{count}} Requests via WhatsApp",
+    "sending": "Opening WhatsApp...",
+    "skip": "Skip for now",
+    "doneTitle": "Requests Sent!",
+    "doneMessage": "{{count}} birthday requests sent via WhatsApp. You'll be notified when they add their birthdays.",
+    "allDone": "All caught up!",
+    "allDoneMessage": "All your contacts either have birthdays or have already been invited."
+  },
   "settings": {
     "title": "Settings",
     "language": "Language",
@@ -104,5 +125,40 @@
     "account": "Account",
     "premium": "Premium",
     "about": "About Birthdayz"
+  },
+  "notifications": {
+    "title": "Birthday Reminders",
+    "subtitle": "Choose when to be reminded about upcoming birthdays.",
+    "remind7Days": "7 days before",
+    "remind3Days": "3 days before",
+    "remind1Day": "1 day before",
+    "remindMorning": "Morning of birthday"
+  },
+  "wishes": {
+    "chooseMessage": "Choose a Message",
+    "tapToSelect": "Tap a message to select it, or edit below.",
+    "generating": "Creating personalised messages...",
+    "editBelow": "Edit your message",
+    "sendViaWhatsApp": "Send via WhatsApp",
+    "aiWish": "AI Message",
+    "noPhone": "No phone number",
+    "noPhoneMessage": "Add a phone number to send a wish via WhatsApp."
+  },
+  "premium": {
+    "title": "Upgrade to Birthdayz Pro",
+    "subscribe": "Subscribe Now",
+    "restore": "Restore Purchases",
+    "upgradeToPro": "Upgrade to Pro",
+    "unlockFeature": "Unlock {{feature}} with Birthdayz Pro",
+    "friendLimit": "Free plan limited to {{limit}} friends",
+    "featureUnlimitedFriends": "Unlimited friends",
+    "featureAiMessages": "AI-powered birthday messages",
+    "featureAdvanceReminders": "Advance reminders (7 & 3 days)",
+    "featurePriority": "Priority support",
+    "planFree": "Free Plan",
+    "planPro": "Birthdayz Pro",
+    "activeSubscription": "Your subscription is active",
+    "trialDaysLeft": "{{days}} days left in your free trial",
+    "upgradeDescription": "Upgrade for unlimited friends, AI messages & more"
   }
 }

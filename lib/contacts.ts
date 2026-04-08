@@ -46,6 +46,29 @@ export function normalizePhone(phone: string): string {
   return hasPlus ? `+${digits}` : digits;
 }
 
+export interface ContactWithoutBirthday {
+  id: string;
+  name: string;
+  phone: string | null;
+}
+
+export async function getContactsWithoutBirthdays(): Promise<ContactWithoutBirthday[]> {
+  const { data } = await Contacts.getContactsAsync({
+    fields: [Contacts.Fields.Birthday, Contacts.Fields.PhoneNumbers, Contacts.Fields.Name],
+  });
+
+  return data
+    .filter((c) => !c.birthday && c.name && c.phoneNumbers?.length)
+    .map((c) => {
+      const phone = c.phoneNumbers?.[0]?.number || null;
+      return {
+        id: c.id!,
+        name: c.name!,
+        phone: phone ? normalizePhone(phone) : null,
+      };
+    });
+}
+
 export function filterAlreadyImported(
   contacts: ContactWithBirthday[],
   existingFriends: Friend[],
