@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, Switch, StyleSheet } from 'react-native';
+import { View, Switch, StyleSheet, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
@@ -21,12 +21,14 @@ export function NotificationPreferences() {
 
   useEffect(() => {
     if (!user?.id) return;
-    supabase
-      .from('notification_preferences')
-      .select('*')
-      .eq('user_id', user.id)
-      .single()
-      .then(({ data }) => {
+    (async () => {
+      try {
+        const { data } = await supabase
+          .from('notification_preferences')
+          .select('*')
+          .eq('user_id', user.id)
+          .single();
+
         if (data) {
           setPrefs(data as NotifPrefs);
         } else {
@@ -39,17 +41,19 @@ export function NotificationPreferences() {
             remind_morning: true,
             reminder_time: '08:00',
           };
-          supabase
+          const { data: created } = await supabase
             .from('notification_preferences')
             .insert(defaults)
             .select()
-            .single()
-            .then(({ data: created }) => {
-              if (created) setPrefs(created as NotifPrefs);
-            });
+            .single();
+          if (created) setPrefs(created as NotifPrefs);
         }
+      } catch (err) {
+        console.error('Load notification prefs:', err);
+      } finally {
         setLoading(false);
-      });
+      }
+    })();
   }, [user?.id]);
 
   async function togglePref(key: keyof Pick<NotifPrefs, 'remind_7_days' | 'remind_3_days' | 'remind_1_day' | 'remind_morning'>) {
@@ -61,12 +65,18 @@ export function NotificationPreferences() {
       return;
     }
 
-    const newValue = !prefs[key];
+    const prevValue = prefs[key];
+    const newValue = !prevValue;
     setPrefs({ ...prefs, [key]: newValue });
-    await supabase
+    const { error } = await supabase
       .from('notification_preferences')
       .update({ [key]: newValue })
       .eq('user_id', prefs.user_id);
+    if (error) {
+      console.error('Update notification pref:', error);
+      setPrefs({ ...prefs, [key]: prevValue });
+      Alert.alert(t('common.error'), t('common.retry'));
+    }
   }
 
   if (loading || !prefs) return null;

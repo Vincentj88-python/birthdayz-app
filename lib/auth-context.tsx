@@ -38,6 +38,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         setIsLoading(false);
       }
+    }).catch((e) => {
+      console.error('Get session failed:', e);
+      setIsLoading(false);
     });
 
     const {
@@ -73,17 +76,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   async function fetchUserProfile(userId: string) {
-    const { data } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', userId)
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', userId)
+        .single();
 
-    if (data) {
-      setUser(data as User);
+      if (error) {
+        console.error('Fetch user profile error:', error);
+      } else if (data) {
+        setUser(data as User);
+      }
+    } catch (e) {
+      console.error('Fetch user profile failed:', e);
+    } finally {
+      setProfileChecked(true);
+      setIsLoading(false);
     }
-    setProfileChecked(true);
-    setIsLoading(false);
   }
 
   async function refreshUser() {

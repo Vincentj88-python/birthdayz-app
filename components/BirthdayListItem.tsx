@@ -13,7 +13,7 @@ interface BirthdayListItemProps {
 }
 
 export function BirthdayListItem({ friend, daysUntil, ageTurning, onPress }: BirthdayListItemProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const daysLabel =
     daysUntil === 0
@@ -28,13 +28,13 @@ export function BirthdayListItem({ friend, daysUntil, ageTurning, onPress }: Bir
         daysUntil={daysUntil}
         size={52}
         strokeWidth={4}
-        label={daysUntil > 0 ? (daysUntil === 1 ? 'tmrw' : 'days') : undefined}
+        label={daysUntil > 0 ? (daysUntil === 1 ? t('home.tmrw') : t('home.days')) : undefined}
       />
 
       <View style={styles.info}>
         <Body style={styles.name}>{friend.name}</Body>
         <Muted style={styles.detail}>
-          {formatBirthdayDisplay(friend.birthday!)}
+          {formatBirthdayDisplay(friend.birthday!, i18n.language)}
           {ageTurning > 0 ? ` · ${t('friend.turnsAge', { age: ageTurning })}` : ''}
         </Muted>
       </View>

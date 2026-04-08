@@ -54,7 +54,7 @@ export default function OnboardingScreen() {
           <Input
             value={displayName}
             onChangeText={setDisplayName}
-            placeholder="Your name"
+            placeholder={t('onboarding.namePlaceholder')}
             autoFocus
           />
         </View>

@@ -1,7 +1,7 @@
 import { Platform } from 'react-native';
 import Purchases, { LOG_LEVEL, CustomerInfo } from 'react-native-purchases';
 
-const API_KEY = 'test_YCmuXoFeDRlJtEMHDAlyyeFsxSM';
+const API_KEY = process.env.EXPO_PUBLIC_REVENUECAT_API_KEY!;
 export const ENTITLEMENT_ID = 'Birthdayz Pro';
 
 let initialized = false;
@@ -21,7 +21,8 @@ export async function checkPremiumEntitlement(): Promise<boolean> {
   try {
     const customerInfo = await Purchases.getCustomerInfo();
     return typeof customerInfo.entitlements.active[ENTITLEMENT_ID] !== 'undefined';
-  } catch {
+  } catch (e) {
+    console.error('RevenueCat entitlement check failed:', e);
     return false;
   }
 }

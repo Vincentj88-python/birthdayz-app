@@ -69,12 +69,7 @@ export function sortByUpcoming(friends: Friend[]): Friend[] {
   return [...withBirthday, ...withoutBirthday];
 }
 
-const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-];
-
-export function formatBirthdayDisplay(birthday: string): string {
+export function formatBirthdayDisplay(birthday: string, locale: string = 'en'): string {
   const bday = new Date(birthday + 'T00:00:00');
-  return `${bday.getDate()} ${MONTHS[bday.getMonth()]}`;
+  return new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long' }).format(bday);
 }

@@ -26,6 +26,7 @@
     "importContacts": "Find friends with birthdays",
     "inviteFriends": "Complete your birthday list",
     "notifications": "Stay reminded",
+    "namePlaceholder": "Your name",
     "allSet": "You're all set!",
     "friendsAdded": "You've added {{count}} birthdays",
     "pendingInvites": "{{count}} friends haven't added theirs yet"
@@ -51,6 +52,9 @@
     "emptyUpcoming": "No upcoming birthdays in the next 30 days",
     "birthdayIn": "in {{days}} days",
     "birthdayTomorrow": "Tomorrow",
+    "tmrw": "tmrw",
+    "days": "days",
+    "birthdayIsToday": "{{name}}'s birthday is today!",
     "statFriends": "Friends",
     "statBirthdays": "Birthdays",
     "statUpcoming": "Upcoming"
@@ -86,7 +90,12 @@
     "turnsAge": "Turning {{age}}",
     "wishHistory": "Wish History",
     "noWishes": "No wishes sent yet",
-    "deleteSuccess": "Friend deleted"
+    "deleteSuccess": "Friend deleted",
+    "namePlaceholder": "e.g. Margaret",
+    "phonePlaceholder": "+27 82 123 4567",
+    "selectBirthday": "Select birthday",
+    "notesPlaceholder": "Likes gardening, loves rugby...",
+    "yearsOld": "{{age}} years old"
   },
   "invite": {
     "requestBirthday": "Request Birthday",
@@ -142,7 +151,9 @@
     "sendViaWhatsApp": "Send via WhatsApp",
     "aiWish": "AI Message",
     "noPhone": "No phone number",
-    "noPhoneMessage": "Add a phone number to send a wish via WhatsApp."
+    "noPhoneMessage": "Add a phone number to send a wish via WhatsApp.",
+    "defaultMessage": "Happy birthday, {{name}}! \ud83c\udf82",
+    "defaultMessageWithAge": "Happy birthday, {{name}}! Wishing you a wonderful {{age}}th birthday! \ud83c\udf82"
   },
   "premium": {
     "title": "Upgrade to Birthdayz Pro",

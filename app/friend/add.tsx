@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, ScrollView, TouchableOpacity, Platform, StyleSheet } from 'react-native';
+import { View, ScrollView, TouchableOpacity, Platform, StyleSheet, Alert } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -24,7 +24,7 @@ const RELATIONSHIP_KEYS: Record<string, string> = {
 };
 
 export default function AddFriendScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { friendId } = useLocalSearchParams<{ friendId?: string }>();
   const { addFriend, updateFriend, friends } = useFriends();
   const { isPremium } = usePremium();
@@ -86,8 +86,13 @@ export default function AddFriendScreen() {
         await addFriend(data);
       }
       router.back();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Save friend error:', err);
+      if (err?.code === 'P0001' || err?.message?.includes('Friend limit')) {
+        setShowPaywall(true);
+      } else {
+        Alert.alert(t('common.error'), t('common.retry'));
+      }
     } finally {
       setLoading(false);
     }
@@ -122,7 +127,7 @@ export default function AddFriendScreen() {
           label={t('friend.name')}
           value={name}
           onChangeText={setName}
-          placeholder="e.g. Margaret"
+          placeholder={t('friend.namePlaceholder')}
           autoFocus={!isEdit}
         />
 
@@ -131,7 +136,7 @@ export default function AddFriendScreen() {
             label={t('friend.phone')}
             value={phone}
             onChangeText={setPhone}
-            placeholder="+27 82 123 4567"
+            placeholder={t('friend.phonePlaceholder')}
             keyboardType="phone-pad"
           />
         </View>
@@ -143,7 +148,7 @@ export default function AddFriendScreen() {
             onPress={() => setShowDatePicker(true)}
           >
             <Body style={birthday ? styles.dateText : styles.datePlaceholder}>
-              {birthday ? formatBirthdayDisplay(birthday.toISOString().split('T')[0]) : 'Select birthday'}
+              {birthday ? formatBirthdayDisplay(birthday.toISOString().split('T')[0], i18n.language) : t('friend.selectBirthday')}
             </Body>
             {birthday && (
               <TouchableOpacity onPress={() => setBirthday(null)} hitSlop={8}>
@@ -191,7 +196,7 @@ export default function AddFriendScreen() {
             label={t('friend.notes')}
             value={notes}
             onChangeText={setNotes}
-            placeholder="Likes gardening, loves rugby..."
+            placeholder={t('friend.notesPlaceholder')}
             multiline
             numberOfLines={3}
             style={{ minHeight: 80, textAlignVertical: 'top' }}

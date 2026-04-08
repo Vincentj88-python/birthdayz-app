@@ -20,7 +20,7 @@ import type { Friend, Wish } from '@/types/database';
 
 export default function FriendDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const { deleteFriend } = useFriends();
   const { isPremium } = usePremium();
@@ -90,10 +90,11 @@ export default function FriendDetailScreen() {
       });
       setAiWishes(generated);
       if (generated.length > 0) setSelectedWish(generated[0]);
-    } catch {
+    } catch (e) {
+      console.error('AI wish generation failed:', e);
       const fallback = ageTurning && ageTurning > 0
-        ? `Happy birthday, ${friend.name}! Wishing you a wonderful ${ageTurning}th birthday! 🎂`
-        : `Happy birthday, ${friend.name}! 🎂`;
+        ? t('wishes.defaultMessageWithAge', { name: friend.name, age: ageTurning })
+        : t('wishes.defaultMessage', { name: friend.name });
       setAiWishes([fallback]);
       setSelectedWish(fallback);
     } finally {
@@ -107,8 +108,8 @@ export default function FriendDetailScreen() {
       return;
     }
     const message = ageTurning && ageTurning > 0
-      ? `Happy birthday, ${friend.name}! Wishing you a wonderful ${ageTurning}th birthday! 🎂`
-      : `Happy birthday, ${friend.name}! 🎂`;
+      ? t('wishes.defaultMessageWithAge', { name: friend.name, age: ageTurning })
+      : t('wishes.defaultMessage', { name: friend.name });
 
     sendViaWhatsApp(friend.phone, message);
 
@@ -208,9 +209,9 @@ export default function FriendDetailScreen() {
 
           {hasBirthday ? (
             <>
-              <Body style={styles.birthdayDate}>{formatBirthdayDisplay(friend.birthday!)}</Body>
+              <Body style={styles.birthdayDate}>{formatBirthdayDisplay(friend.birthday!, i18n.language)}</Body>
               {age !== null && age > 0 && (
-                <Muted>{age} years old</Muted>
+                <Muted>{t('friend.yearsOld', { age })}</Muted>
               )}
               {daysUntil !== null && daysUntil > 0 && (
                 <Muted style={styles.daysUntil}>

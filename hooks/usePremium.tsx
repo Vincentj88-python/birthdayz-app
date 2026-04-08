@@ -41,7 +41,8 @@ export function PremiumProvider({ children }: { children: React.ReactNode }) {
       await initRevenueCat(user.id);
       const hasEntitlement = await checkPremiumEntitlement();
       setIsPremium(hasEntitlement);
-    } catch {
+    } catch (e) {
+      console.error('RevenueCat check failed:', e);
       setIsPremium(false);
     }
 

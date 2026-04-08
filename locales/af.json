@@ -26,6 +26,7 @@
     "importContacts": "Vind vriende met verjaarsdae",
     "inviteFriends": "Voltooi jou verjaardaglys",
     "notifications": "Bly herinner",
+    "namePlaceholder": "Jou naam",
     "allSet": "Jy is gereed!",
     "friendsAdded": "Jy het {{count}} verjaarsdae bygevoeg",
     "pendingInvites": "{{count}} vriende het nog nie hulle s'n bygevoeg nie"
@@ -51,6 +52,9 @@
     "emptyUpcoming": "Geen komende verjaarsdae in die volgende 30 dae nie",
     "birthdayIn": "oor {{days}} dae",
     "birthdayTomorrow": "Môre",
+    "tmrw": "more",
+    "days": "dae",
+    "birthdayIsToday": "Dit is {{name}} se verjaarsdag vandag!",
     "statFriends": "Vriende",
     "statBirthdays": "Verjaarsdae",
     "statUpcoming": "Binnekort"
@@ -86,7 +90,12 @@
     "turnsAge": "Word {{age}}",
     "wishHistory": "Wens Geskiedenis",
     "noWishes": "Nog geen wense gestuur nie",
-    "deleteSuccess": "Vriend verwyder"
+    "deleteSuccess": "Vriend verwyder",
+    "namePlaceholder": "bv. Margaret",
+    "phonePlaceholder": "+27 82 123 4567",
+    "selectBirthday": "Kies verjaarsdag",
+    "notesPlaceholder": "Hou van tuinmaak, lief vir rugby...",
+    "yearsOld": "{{age}} jaar oud"
   },
   "invite": {
     "requestBirthday": "Versoek Verjaarsdag",
@@ -142,7 +151,9 @@
     "sendViaWhatsApp": "Stuur via WhatsApp",
     "aiWish": "KI Boodskap",
     "noPhone": "Geen telefoonnommer",
-    "noPhoneMessage": "Voeg 'n telefoonnommer by om 'n wens via WhatsApp te stuur."
+    "noPhoneMessage": "Voeg 'n telefoonnommer by om 'n wens via WhatsApp te stuur.",
+    "defaultMessage": "Gelukkige verjaarsdag, {{name}}! \ud83c\udf82",
+    "defaultMessageWithAge": "Gelukkige verjaarsdag, {{name}}! Mag jy 'n wonderlike {{age}}ste verjaarsdag h\u00ea! \ud83c\udf82"
   },
   "premium": {
     "title": "Opgradeer na Birthdayz Pro",

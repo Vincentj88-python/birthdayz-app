@@ -102,7 +102,7 @@ export function BirthdayHero({ friends, onSendWish }: BirthdayHeroProps) {
           <Body style={styles.heroAge}>
             {age > 0
               ? t('home.turnsToday', { name: friend.name, age })
-              : `${friend.name}'s birthday is today!`}
+              : t('home.birthdayIsToday', { name: friend.name })}
           </Body>
 
           <AnimatedPressable
