@@ -52,6 +52,26 @@ export function FriendsProvider({ children }: { children: React.ReactNode }) {
     fetchFriends();
   }, [fetchFriends]);
 
+  // Real-time: auto-refresh when friends table changes (e.g. birthday submitted via invite)
+  useEffect(() => {
+    if (!userId) return;
+
+    const channel = supabase
+      .channel('friends-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'friends', filter: `user_id=eq.${userId}` },
+        () => {
+          fetchFriends();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [userId, fetchFriends]);
+
   async function refresh() {
     setIsLoading(true);
     await fetchFriends();

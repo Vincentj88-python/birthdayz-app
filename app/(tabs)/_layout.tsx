@@ -6,7 +6,7 @@ import { colors, fonts } from '@/constants/theme';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function TabsLayout() {
-  const { session, user, isLoading } = useAuth();
+  const { session, user, isLoading, profileChecked } = useAuth();
   const { t } = useTranslation();
 
   if (isLoading) {
@@ -19,6 +19,15 @@ export default function TabsLayout() {
 
   if (!session) {
     return <Redirect href="/(auth)/sign-in" />;
+  }
+
+  // Wait until profile fetch completes before deciding
+  if (!profileChecked) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background.start }}>
+        <ActivityIndicator size="large" color={colors.accent.red} />
+      </View>
+    );
   }
 
   if (!user) {

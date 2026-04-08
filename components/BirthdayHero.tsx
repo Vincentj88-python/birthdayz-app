@@ -165,6 +165,7 @@ const styles = StyleSheet.create({
   },
   emoji: {
     fontSize: 56,
+    lineHeight: 70,
     marginBottom: spacing.sm,
   },
   heroName: {

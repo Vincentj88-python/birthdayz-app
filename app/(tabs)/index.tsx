@@ -167,6 +167,7 @@ const styles = StyleSheet.create({
   },
   emptyEmoji: {
     fontSize: 48,
+    lineHeight: 60,
     marginBottom: spacing.sm,
   },
   emptyTitle: {

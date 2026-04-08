@@ -14,6 +14,7 @@ interface AuthContextType {
   session: Session | null;
   user: User | null;
   isLoading: boolean;
+  profileChecked: boolean;
   signInWithGoogle: () => Promise<void>;
   signInWithEmail: (email: string, password: string) => Promise<void>;
   signUpWithEmail: (email: string, password: string) => Promise<void>;
@@ -27,6 +28,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [profileChecked, setProfileChecked] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -43,9 +45,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session);
       if (session?.user) {
+        setProfileChecked(false);
         await fetchUserProfile(session.user.id);
       } else {
         setUser(null);
+        setProfileChecked(true);
         setIsLoading(false);
       }
     });
@@ -78,6 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (data) {
       setUser(data as User);
     }
+    setProfileChecked(true);
     setIsLoading(false);
   }
 
@@ -138,11 +143,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await supabase.auth.signOut();
     setSession(null);
     setUser(null);
+    setProfileChecked(false);
   }
 
   return (
     <AuthContext.Provider
-      value={{ session, user, isLoading, signInWithGoogle, signInWithEmail, signUpWithEmail, signOut, refreshUser }}
+      value={{ session, user, isLoading, profileChecked, signInWithGoogle, signInWithEmail, signUpWithEmail, signOut, refreshUser }}
     >
       {children}
     </AuthContext.Provider>

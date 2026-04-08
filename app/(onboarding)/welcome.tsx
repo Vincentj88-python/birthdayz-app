@@ -20,14 +20,21 @@ export default function OnboardingScreen() {
 
     setLoading(true);
     try {
-      const { error } = await supabase.from('users').insert({
+      // Try insert first (new user)
+      const { error: insertError } = await supabase.from('users').insert({
         id: session.user.id,
         email: session.user.email,
         display_name: displayName.trim(),
         trial_ends_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
       });
 
-      if (error) throw error;
+      // If user already exists, just update the display name
+      if (insertError) {
+        await supabase
+          .from('users')
+          .update({ display_name: displayName.trim() })
+          .eq('id', session.user.id);
+      }
 
       await refreshUser();
       router.replace('/(tabs)');
