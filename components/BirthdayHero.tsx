@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { ScrollView, View, StyleSheet } from 'react-native';
+import { ScrollView, View, StyleSheet, Dimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Animated, {
   useSharedValue,
@@ -79,6 +79,10 @@ function PulsingDot({ delay: d }: { delay: number }) {
 
   return <Animated.View style={[styles.dot, style]} />;
 }
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
+const CARD_GAP = spacing.md;
+const CARD_WIDTH = (SCREEN_WIDTH - spacing.lg * 2 - CARD_GAP) / 2;
 
 export function BirthdayHero({ friends, onSendWish }: BirthdayHeroProps) {
   const { t } = useTranslation();
@@ -202,15 +206,14 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: spacing.lg,
-    paddingRight: spacing.lg + spacing.md,
   },
   miniCard: {
     backgroundColor: colors.accent.red,
     borderRadius: borderRadius.xl,
     padding: spacing.lg,
     alignItems: 'center',
-    width: 180,
-    marginRight: spacing.md,
+    width: CARD_WIDTH,
+    marginRight: CARD_GAP,
   },
   miniName: {
     color: colors.white,

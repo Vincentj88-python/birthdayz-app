@@ -42,18 +42,23 @@ export default function ImportContactsScreen() {
   }, [loading, permissionDenied, contacts.length]);
 
   async function loadContacts() {
-    const granted = await requestContactsPermission();
-    if (!granted) {
-      setPermissionDenied(true);
-      setLoading(false);
-      return;
-    }
+    try {
+      const granted = await requestContactsPermission();
+      if (!granted) {
+        setPermissionDenied(true);
+        setLoading(false);
+        return;
+      }
 
-    const allContacts = await getContactsWithBirthdays();
-    const filtered = filterAlreadyImported(allContacts, friends);
-    setContacts(filtered);
-    setSelected(new Set(filtered.map((c) => c.id)));
-    setLoading(false);
+      const allContacts = await getContactsWithBirthdays();
+      const filtered = filterAlreadyImported(allContacts, friends);
+      setContacts(filtered);
+      setSelected(new Set(filtered.map((c) => c.id)));
+    } catch (e) {
+      console.error('Load contacts failed:', e);
+    } finally {
+      setLoading(false);
+    }
   }
 
   function toggleContact(id: string) {
@@ -85,92 +90,86 @@ export default function ImportContactsScreen() {
       }));
 
     await batchAddFriends(toImport);
-    // Navigate to request birthdays screen for contacts WITHOUT birthdays
     router.replace('/friend/request-birthdays');
   }
 
-  if (loading) {
-    return (
-      <ScreenContainer>
-        <Body style={styles.center}>{t('common.loading')}</Body>
-      </ScreenContainer>
-    );
-  }
-
-  if (permissionDenied) {
-    return (
-      <ScreenContainer>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} hitSlop={12}>
-            <Ionicons name="close" size={28} color={colors.text.primary} />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.emptyContainer}>
-          <Body style={styles.emoji}>📱</Body>
-          <Heading style={styles.emptyTitle}>{t('contacts.permissionTitle')}</Heading>
-          <Body style={styles.emptyText}>{t('contacts.permissionMessage')}</Body>
-        </View>
-      </ScreenContainer>
-    );
-  }
-
+  // Single return — no early returns to avoid hooks order issues
   return (
     <ScreenContainer>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} hitSlop={12}>
-          <Ionicons name="close" size={28} color={colors.text.primary} />
-        </TouchableOpacity>
-        <Heading style={styles.title}>{t('contacts.importTitle')}</Heading>
-        <View style={{ width: 28 }} />
-      </View>
-
-      <Input
-        placeholder={t('friends.search')}
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-      />
-
-      <View style={styles.countRow}>
-        <Muted>{t('contacts.found', { count: contacts.length })}</Muted>
-        <TouchableOpacity onPress={toggleAll}>
-          <Body style={styles.selectAllText}>
-            {selected.size === contacts.length ? t('contacts.deselectAll') : t('contacts.selectAll')}
-          </Body>
-        </TouchableOpacity>
-      </View>
-
-      <FlatList
-        data={filteredContacts}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => {
-          const isSelected = selected.has(item.id);
-          return (
-            <TouchableOpacity
-              style={[styles.contactRow, isSelected && styles.contactSelected]}
-              onPress={() => toggleContact(item.id)}
-              activeOpacity={0.7}
-            >
-              <View style={[styles.checkbox, isSelected && styles.checkboxChecked]}>
-                {isSelected && <Ionicons name="checkmark" size={16} color={colors.white} />}
-              </View>
-              <View style={styles.contactInfo}>
-                <Body style={styles.contactName}>{item.name}</Body>
-                <Muted>{formatBirthdayDisplay(item.birthday, i18n.language)}</Muted>
-              </View>
+      {loading ? (
+        <Body style={styles.center}>{t('common.loading')}</Body>
+      ) : permissionDenied ? (
+        <>
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => router.back()} hitSlop={12}>
+              <Ionicons name="close" size={28} color={colors.text.primary} />
             </TouchableOpacity>
-          );
-        }}
-      />
+          </View>
+          <View style={styles.emptyContainer}>
+            <Body style={styles.emoji}>📱</Body>
+            <Heading style={styles.emptyTitle}>{t('contacts.permissionTitle')}</Heading>
+            <Body style={styles.emptyText}>{t('contacts.permissionMessage')}</Body>
+          </View>
+        </>
+      ) : (
+        <>
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => router.back()} hitSlop={12}>
+              <Ionicons name="close" size={28} color={colors.text.primary} />
+            </TouchableOpacity>
+            <Heading style={styles.title}>{t('contacts.importTitle')}</Heading>
+            <View style={{ width: 28 }} />
+          </View>
 
-      <View style={styles.importBar}>
-        <Button
-          title={importing ? t('contacts.importing') : t('contacts.imported', { count: selected.size })}
-          onPress={handleImport}
-          loading={importing}
-          disabled={selected.size === 0}
-          fullWidth
-        />
-      </View>
+          <Input
+            placeholder={t('friends.search')}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+
+          <View style={styles.countRow}>
+            <Muted>{t('contacts.found', { count: contacts.length })}</Muted>
+            <TouchableOpacity onPress={toggleAll}>
+              <Body style={styles.selectAllText}>
+                {selected.size === contacts.length ? t('contacts.deselectAll') : t('contacts.selectAll')}
+              </Body>
+            </TouchableOpacity>
+          </View>
+
+          <FlatList
+            data={filteredContacts}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => {
+              const isSelected = selected.has(item.id);
+              return (
+                <TouchableOpacity
+                  style={[styles.contactRow, isSelected && styles.contactSelected]}
+                  onPress={() => toggleContact(item.id)}
+                  activeOpacity={0.7}
+                >
+                  <View style={[styles.checkbox, isSelected && styles.checkboxChecked]}>
+                    {isSelected && <Ionicons name="checkmark" size={16} color={colors.white} />}
+                  </View>
+                  <View style={styles.contactInfo}>
+                    <Body style={styles.contactName}>{item.name}</Body>
+                    <Muted>{formatBirthdayDisplay(item.birthday, i18n.language)}</Muted>
+                  </View>
+                </TouchableOpacity>
+              );
+            }}
+          />
+
+          <View style={styles.importBar}>
+            <Button
+              title={importing ? t('contacts.importing') : `${t('contacts.importTitle')} (${selected.size})`}
+              onPress={handleImport}
+              loading={importing}
+              disabled={selected.size === 0}
+              fullWidth
+            />
+          </View>
+        </>
+      )}
     </ScreenContainer>
   );
 }

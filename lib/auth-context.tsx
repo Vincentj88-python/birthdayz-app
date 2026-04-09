@@ -131,6 +131,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           access_token: accessToken,
           refresh_token: refreshToken,
         });
+        return;
+      }
+    }
+
+    // On Android, browser often returns 'dismiss' — tokens arrive via deep link.
+    // Wait for the session to be established by the deep link handler.
+    for (let i = 0; i < 20; i++) {
+      await new Promise((r) => setTimeout(r, 500));
+      const { data: check } = await supabase.auth.getSession();
+      if (check.session) {
+        setSession(check.session);
+        await fetchUserProfile(check.session.user.id);
+        return;
       }
     }
   }
