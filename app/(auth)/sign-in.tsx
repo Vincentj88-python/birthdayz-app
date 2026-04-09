@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
+import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth-context';
 import { ScreenContainer, Heading, Body, Muted, Button, Input } from '@/components/ui';
@@ -7,9 +8,16 @@ import { spacing, fontSize, colors } from '@/constants/theme';
 
 export default function SignInScreen() {
   const { t } = useTranslation();
-  const { signInWithGoogle, signInWithEmail, signUpWithEmail } = useAuth();
+  const { session, signInWithGoogle, signInWithEmail, signUpWithEmail } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Navigate when session is established
+  useEffect(() => {
+    if (session) {
+      router.replace('/(tabs)');
+    }
+  }, [session]);
 
   // Dev email auth state
   const [showDevAuth, setShowDevAuth] = useState(false);

@@ -5,15 +5,14 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/lib/auth-context';
 import { useFriends } from '@/hooks/useFriends';
 import { getBirthdaysToday, getUpcomingBirthdays, daysUntilBirthday, getAgeTurning } from '@/lib/birthday';
-import { sendViaWhatsApp } from '@/lib/whatsapp';
 import { registerForPushNotifications } from '@/lib/notifications';
-import { supabase } from '@/lib/supabase';
 import { ScreenContainer, Heading, Body, Muted, Card, FadeIn } from '@/components/ui';
 import { BirthdayHero } from '@/components/BirthdayHero';
 import { BirthdayListItem } from '@/components/BirthdayListItem';
 import { InviteBanner } from '@/components/InviteBanner';
 import { spacing, fontSize, colors, fonts } from '@/constants/theme';
 import type { Friend } from '@/types/database';
+
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -39,22 +38,8 @@ export default function HomeScreen() {
   const upcomingBirthdays = getUpcomingBirthdays(friends, 30);
   const friendsWithBirthdays = friends.filter((f) => f.birthday).length;
 
-  async function handleSendWish(friend: Friend) {
-    if (!friend.phone) return;
-    const age = getAgeTurning(friend.birthday!);
-    const message = age > 0
-      ? `Happy birthday, ${friend.name}! Wishing you a wonderful ${age}th birthday! 🎂`
-      : `Happy birthday, ${friend.name}! 🎂`;
-
-    sendViaWhatsApp(friend.phone, message);
-
-    await supabase.from('wishes').insert({
-      user_id: user?.id,
-      friend_id: friend.id,
-      year: new Date().getFullYear(),
-      message,
-      channel: 'whatsapp',
-    });
+  function handleSendWish(friend: Friend) {
+    router.push(`/friend/${friend.id}`);
   }
 
   const greeting = t(`home.greeting${getGreeting().charAt(0).toUpperCase() + getGreeting().slice(1)}`, {

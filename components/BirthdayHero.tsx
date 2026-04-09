@@ -119,7 +119,7 @@ export function BirthdayHero({ friends, onSendWish }: BirthdayHeroProps) {
 
   return (
     <FadeIn duration={500}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scroll}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scroll} contentContainerStyle={styles.scrollContent}>
         {friends.map((friend, index) => {
           const age = getAgeTurning(friend.birthday!);
           return (
@@ -199,7 +199,10 @@ const styles = StyleSheet.create({
   },
   scroll: {
     marginHorizontal: -spacing.lg,
+  },
+  scrollContent: {
     paddingHorizontal: spacing.lg,
+    paddingRight: spacing.lg + spacing.md,
   },
   miniCard: {
     backgroundColor: colors.accent.red,

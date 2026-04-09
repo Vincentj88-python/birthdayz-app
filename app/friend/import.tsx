@@ -15,7 +15,7 @@ import { colors, fonts, spacing, fontSize, borderRadius } from '@/constants/them
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function ImportContactsScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { friends, batchAddFriends } = useFriends();
 
   const [contacts, setContacts] = useState<ContactWithBirthday[]>([]);
@@ -34,6 +34,12 @@ export default function ImportContactsScreen() {
   useEffect(() => {
     loadContacts();
   }, []);
+
+  useEffect(() => {
+    if (!loading && !permissionDenied && contacts.length === 0) {
+      router.replace('/friend/request-birthdays');
+    }
+  }, [loading, permissionDenied, contacts.length]);
 
   async function loadContacts() {
     const granted = await requestContactsPermission();
@@ -108,12 +114,6 @@ export default function ImportContactsScreen() {
     );
   }
 
-  useEffect(() => {
-    if (!loading && !permissionDenied && contacts.length === 0) {
-      router.replace('/friend/request-birthdays');
-    }
-  }, [loading, permissionDenied, contacts.length]);
-
   return (
     <ScreenContainer>
       <View style={styles.header}>
@@ -155,7 +155,7 @@ export default function ImportContactsScreen() {
               </View>
               <View style={styles.contactInfo}>
                 <Body style={styles.contactName}>{item.name}</Body>
-                <Muted>{formatBirthdayDisplay(item.birthday)}</Muted>
+                <Muted>{formatBirthdayDisplay(item.birthday, i18n.language)}</Muted>
               </View>
             </TouchableOpacity>
           );
@@ -164,7 +164,7 @@ export default function ImportContactsScreen() {
 
       <View style={styles.importBar}>
         <Button
-          title={importing ? t('contacts.importing') : `Import ${selected.size} contacts`}
+          title={importing ? t('contacts.importing') : t('contacts.imported', { count: selected.size })}
           onPress={handleImport}
           loading={importing}
           disabled={selected.size === 0}
