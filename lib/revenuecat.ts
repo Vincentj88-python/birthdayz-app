@@ -1,20 +1,28 @@
 import { Platform } from 'react-native';
 import Purchases, { LOG_LEVEL, CustomerInfo } from 'react-native-purchases';
 
-const API_KEY = process.env.EXPO_PUBLIC_REVENUECAT_API_KEY!;
+const API_KEY = process.env.EXPO_PUBLIC_REVENUECAT_API_KEY ?? '';
 export const ENTITLEMENT_ID = 'Birthdayz Pro';
 
 let initialized = false;
 
 export async function initRevenueCat(userId?: string): Promise<void> {
   if (initialized) return;
-
-  if (__DEV__) {
-    Purchases.setLogLevel(LOG_LEVEL.VERBOSE);
+  if (!API_KEY) {
+    console.warn('RevenueCat API key not configured, skipping init');
+    return;
   }
 
-  Purchases.configure({ apiKey: API_KEY, appUserID: userId });
-  initialized = true;
+  try {
+    if (__DEV__) {
+      Purchases.setLogLevel(LOG_LEVEL.VERBOSE);
+    }
+
+    Purchases.configure({ apiKey: API_KEY, appUserID: userId });
+    initialized = true;
+  } catch (e) {
+    console.error('RevenueCat init failed:', e);
+  }
 }
 
 export async function checkPremiumEntitlement(): Promise<boolean> {
